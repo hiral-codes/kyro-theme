@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyro | Premium Skincare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baskervville:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Baskervville', 'serif'], },
+                    colors: {
+                        kyro: {
+                            50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 300: '#fda4af',
+                            400: '#fb7185', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c',
+                            800: '#9f1239', 900: '#881337',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff1f2; }
+        ::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fb7185; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .glass-nav { background: rgba(255, 241, 242, 0.85); backdrop-filter: blur(12px); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .accordion-content { transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, padding 0.4s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 500px; opacity: 1; padding-bottom: 1.5rem; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-icon.rotate { transform: rotate(180deg); }
+        .translate-y-full { transform: translateY(150%); }
+        .translate-y-0 { transform: translateY(0); }
+        
+        /* Heart Animation */
+        .heart-beat { animation: heartBeat 0.3s ease-in-out; }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="font-sans text-kyro-900 bg-kyro-50 antialiased selection:bg-kyro-200 selection:text-kyro-900">
+
+    <header class="fixed w-full z-40 glass-nav border-b border-kyro-200/50 transition-all duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20 sm:h-24">
+                <div class="flex items-center sm:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-kyro-800 hover:text-kyro-500 focus:outline-none p-2 rounded-lg">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="flex-shrink-0 flex items-center justify-center flex-1 sm:flex-none sm:justify-start">
+                    <a href="#" onclick="switchView('home-view')" class="text-3xl sm:text-4xl italic font-bold text-kyro-700 tracking-tight">Kyro.</a>
+                </div>
+
+                <nav class="hidden sm:flex space-x-12">
+                    <a href="#" onclick="switchView('home-view')" class="text-kyro-800 hover:text-kyro-500 px-3 py-2 text-lg transition cursor-pointer border-b-2 border-transparent hover:border-kyro-400">Shop Collection</a>
+                    <a href="#promotions" onclick="switchView('home-view', true)" class="text-kyro-800 hover:text-kyro-500 px-3 py-2 text-lg transition cursor-pointer border-b-2 border-transparent hover:border-kyro-400">Our Community</a>
+                </nav>
+
+                <div class="flex items-center justify-end space-x-3 sm:space-x-4">
+                    <!-- User Account / Login -->
+                    <button onclick="handleUserAction()" class="p-2.5 sm:p-3 text-kyro-800 hover:text-white hover:bg-kyro-500 transition-colors duration-300 rounded-full bg-white shadow-sm border border-kyro-100 group">
+                        <i id="header-user-icon" class="far fa-user text-lg sm:text-xl transform group-hover:scale-110 transition-transform"></i>
+                    </button>
+                    <!-- Favorites -->
+                    <button onclick="openFavorites()" class="relative p-2.5 sm:p-3 text-kyro-800 hover:text-white hover:bg-kyro-500 transition-colors duration-300 rounded-full bg-white shadow-sm border border-kyro-100 group">
+                        <i class="far fa-heart text-lg sm:text-xl transform group-hover:scale-110 transition-transform"></i>
+                        <span id="fav-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 text-[10px] sm:text-xs font-bold text-white bg-kyro-700 border-2 border-white rounded-full hidden shadow-sm transition-all duration-300 scale-0">0</span>
+                    </button>
+                    <!-- Cart -->
+                    <button onclick="toggleCart()" class="relative p-2.5 sm:p-3 text-kyro-800 hover:text-white hover:bg-kyro-500 transition-colors duration-300 rounded-full bg-white shadow-sm border border-kyro-100 group">
+                        <i class="fas fa-shopping-bag text-lg sm:text-xl transform group-hover:scale-110 transition-transform"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 text-[10px] sm:text-xs font-bold text-white bg-kyro-700 border-2 border-white rounded-full hidden shadow-sm transition-all duration-300 scale-0">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="hidden sm:hidden bg-kyro-50 border-t border-kyro-200 absolute w-full shadow-2xl z-50">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#" onclick="switchView('home-view'); toggleMobileMenu();" class="block px-4 py-3 text-lg text-kyro-800 hover:text-white hover:bg-kyro-500 rounded-2xl transition">Shop Collection</a>
+                <a href="#promotions" onclick="switchView('home-view', true); toggleMobileMenu();" class="block px-4 py-3 text-lg text-kyro-800 hover:text-white hover:bg-kyro-500 rounded-2xl transition">Our Community</a>
+                <a href="#" onclick="handleUserAction(); toggleMobileMenu();" class="block px-4 py-3 text-lg text-kyro-800 hover:text-white hover:bg-kyro-500 rounded-2xl transition">My Account</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20 sm:pt-24 min-h-screen pb-16">
+        
+        <!-- HOME VIEW -->
+        <div id="home-view" class="view-section fade-in block">
+            <section class="relative bg-kyro-100 overflow-hidden min-h-[75vh] sm:min-h-[85vh] flex items-center rounded-b-[2.5rem] sm:rounded-b-[3rem] shadow-sm mb-12 sm:mb-16 mx-2 sm:mx-4 mt-2">
+                <div class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1615397323282-3837976e100e?auto=format&fit=crop&q=80&w=2000" alt="Kyro Skincare Aesthetic" class="w-full h-full object-cover object-right md:object-center">
+                    <div class="absolute inset-0 bg-gradient-to-r from-kyro-100 via-kyro-50/80 to-transparent md:w-2/3"></div>
+                </div>
+                
+                <div class="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full z-10">
+                    <div class="max-w-2xl pt-12 md:pt-0">
+                        <span class="inline-block py-1.5 px-4 rounded-full bg-white/70 backdrop-blur-md text-kyro-700 font-bold tracking-widest uppercase text-xs mb-6 border border-kyro-200 shadow-sm">The New Standard</span>
+                        <h1 class="text-5xl sm:text-6xl md:text-7xl font-normal text-kyro-900 leading-[1.1] mb-4 sm:mb-6">Embrace Your <br><span class="text-kyro-600 italic font-bold">Natural Radiance.</span></h1>
+                        <p class="text-lg sm:text-xl md:text-2xl text-kyro-800/80 mb-8 sm:mb-10 leading-relaxed font-light max-w-lg">Discover our premium skincare line, beautifully crafted with nature's finest ingredients for a flawless, glowing complexion.</p>
+                        <div class="flex flex-wrap gap-3 sm:gap-4">
+                            <button onclick="document.getElementById('shop-grid').scrollIntoView({behavior: 'smooth'})" class="px-8 sm:px-10 py-4 sm:py-5 bg-kyro-600 text-white rounded-full text-lg sm:text-xl hover:bg-kyro-700 transition-all duration-300 shadow-xl shadow-kyro-500/40 transform hover:-translate-y-1">Discover Kyro</button>
+                            <button onclick="document.getElementById('promotions').scrollIntoView({behavior: 'smooth'})" class="px-8 sm:px-10 py-4 sm:py-5 bg-white/70 backdrop-blur-sm text-kyro-800 rounded-full text-lg sm:text-xl hover:bg-white transition-all duration-300 shadow-sm border border-kyro-200">Watch Video</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-12 sm:py-16" id="shop-grid">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 sm:mb-16">
+                        <h2 class="text-4xl md:text-5xl text-kyro-900 mb-4 italic">Our Collection</h2>
+                        <div class="w-24 h-1 bg-kyro-300 mx-auto rounded-full"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+                        
+                        <!-- Product 1 -->
+                        <div onclick="openProductDetail()" class="group cursor-pointer bg-white rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-lg shadow-kyro-100/50 hover:shadow-2xl hover:shadow-kyro-200 transition-all duration-500 border border-kyro-100 flex flex-col transform hover:-translate-y-2 relative">
+                            <div class="relative aspect-[4/5] bg-kyro-50 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=600" class="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out opacity-100 group-hover:opacity-0 z-10">
+                                <img src="https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=600" class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-700 ease-in-out opacity-0 group-hover:opacity-100 group-hover:scale-110 z-0">
+                                
+                                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-kyro-900 px-3 py-1.5 rounded-full shadow-md text-[10px] sm:text-xs font-bold uppercase tracking-widest z-20">Best Seller</div>
+                                
+                                <!-- Favorite Button -->
+                                <button onclick="toggleFav('p1', event)" class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-kyro-300 hover:text-kyro-600 shadow-md z-30 transition-colors">
+                                    <i class="fa-heart fav-icon-p1 far text-lg"></i>
+                                </button>
+
+                                <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-kyro-900/60 to-transparent flex justify-center z-20">
+                                    <div class="bg-white/95 backdrop-blur-sm text-kyro-800 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-base sm:text-lg shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 font-bold">Quick View</div>
+                                </div>
+                            </div>
+                            <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between bg-white z-20">
+                                <div>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-kyro-900 mb-1">Kyro Body Wash</h3>
+                                    <p class="text-base sm:text-lg text-kyro-600/70 italic mb-4">Gentle & Hydrating</p>
+                                </div>
+                                <div class="flex items-center justify-between mt-2 pt-4 border-t border-kyro-50">
+                                    <p class="text-xl sm:text-2xl font-bold text-kyro-700">₹1,299</p>
+                                    <button class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-kyro-50 text-kyro-600 flex items-center justify-center group-hover:bg-kyro-600 group-hover:text-white transition-colors duration-300 shadow-sm"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 (Coming Soon) -->
+                        <div class="relative bg-white rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-kyro-100 flex flex-col group relative">
+                            <div class="relative aspect-[4/5] bg-kyro-100 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover object-center opacity-60 mix-blend-luminosity transition duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-kyro-200/20 mix-blend-multiply"></div>
+                                <div class="absolute top-4 left-4 bg-kyro-800/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full shadow-sm text-[10px] sm:text-xs font-bold uppercase tracking-widest">Coming Soon</div>
+                                <button onclick="toggleFav('p2', event)" class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-kyro-300 hover:text-kyro-600 shadow-md z-30 transition-colors">
+                                    <i class="fa-heart fav-icon-p2 far text-lg"></i>
+                                </button>
+                            </div>
+                            <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-kyro-900 mb-1">Kyro Body Lotion</h3>
+                                    <p class="text-base sm:text-lg text-kyro-600/70 italic">Deep Moisture Lock</p>
+                                </div>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-kyro-50">
+                                    <p class="text-lg text-kyro-400/80">Revealing Soon</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 (Coming Soon) -->
+                        <div class="relative bg-white rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm border border-kyro-100 flex flex-col group relative">
+                            <div class="relative aspect-[4/5] bg-kyro-100 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1570194065650-d99fb4b8f36a?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover object-center opacity-60 mix-blend-luminosity transition duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-kyro-200/20 mix-blend-multiply"></div>
+                                <div class="absolute top-4 left-4 bg-kyro-800/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full shadow-sm text-[10px] sm:text-xs font-bold uppercase tracking-widest">Coming Soon</div>
+                                <button onclick="toggleFav('p3', event)" class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-kyro-300 hover:text-kyro-600 shadow-md z-30 transition-colors">
+                                    <i class="fa-heart fav-icon-p3 far text-lg"></i>
+                                </button>
+                            </div>
+                            <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-kyro-900 mb-1">Face Moisturizer</h3>
+                                    <p class="text-base sm:text-lg text-kyro-600/70 italic">Lightweight Glow</p>
+                                </div>
+                                <div class="flex items-center justify-between mt-4 pt-4 border-t border-kyro-50">
+                                    <p class="text-lg text-kyro-400/80">Revealing Soon</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Promotions Section -->
+            <section id="promotions" class="py-16 sm:py-24 bg-white rounded-[2.5rem] sm:rounded-[3rem] mx-2 sm:mx-6 lg:mx-8 mb-12 shadow-xl shadow-kyro-100/50 border border-kyro-50">
+                 <!-- Existing Promotions content retained perfectly -->
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12 sm:mb-16">
+                        <span class="text-kyro-500 font-bold tracking-widest uppercase text-xs sm:text-sm border-b-2 border-kyro-300 pb-1">Join the Club</span>
+                        <h2 class="text-3xl sm:text-4xl md:text-5xl text-kyro-900 mt-6 italic">The Kyro Community</h2>
+                        <p class="mt-4 sm:mt-6 text-lg sm:text-xl text-kyro-700/80 max-w-2xl mx-auto">Immerse yourself in our world. Watch the latest reels, behind-the-scenes moments, and real customer love.</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 auto-rows-min">
+                        <div class="col-span-2 md:col-span-1 row-span-2 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md aspect-[9/16] bg-kyro-100 group cursor-pointer border border-kyro-50">
+                            <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-kyro-900/60 to-transparent flex items-end p-4"><i class="fab fa-instagram text-white text-3xl"></i></div>
+                        </div>
+                        <div class="col-span-2 md:col-span-1 row-span-1 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md aspect-square bg-kyro-100 group cursor-pointer border border-kyro-50">
+                            <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            <div class="absolute inset-0 bg-kyro-600/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        </div>
+                        <div class="col-span-2 md:col-span-2 row-span-1 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md aspect-[16/9] md:aspect-auto md:h-full bg-kyro-200 group cursor-pointer flex items-center justify-center border border-kyro-50">
+                            <img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition duration-700">
+                            <div class="relative z-10 w-16 h-16 sm:w-20 sm:h-20 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-kyro-600 shadow-2xl group-hover:scale-110 transition-all duration-300"><i class="fas fa-play ml-1 text-xl sm:text-2xl"></i></div>
+                        </div>
+                        <div class="col-span-2 md:col-span-1 row-span-2 md:-mt-[100%] lg:-mt-0 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md aspect-[9/16] bg-kyro-100 group cursor-pointer hidden md:block border border-kyro-50">
+                            <img src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-kyro-900/60 to-transparent flex items-end p-4"><i class="fab fa-instagram text-white text-3xl"></i></div>
+                        </div>
+                        <div class="col-span-2 md:col-span-1 row-span-1 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md aspect-square bg-kyro-100 group cursor-pointer border border-kyro-50">
+                            <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                            <div class="absolute inset-0 bg-kyro-600/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- PRODUCT DETAIL VIEW -->
+        <div id="product-detail-view" class="view-section hidden fade-in pb-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <button onclick="switchView('home-view')" class="inline-flex items-center text-kyro-600 hover:text-kyro-800 mb-6 sm:mb-10 transition text-base sm:text-lg bg-white px-4 sm:px-5 py-2 rounded-full shadow-sm border border-kyro-100">
+                    <i class="fas fa-arrow-left mr-2 sm:mr-3"></i> Return to Collection
+                </button>
+
+                <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-start bg-white p-5 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] shadow-xl shadow-kyro-100/50 border border-kyro-50">
+                    <div class="flex flex-col space-y-4 sm:space-y-6 mb-8 lg:mb-0 lg:sticky lg:top-32">
+                        <div class="rounded-[2rem] overflow-hidden shadow-sm bg-kyro-50 aspect-[4/5] relative border border-kyro-100">
+                            <img id="main-product-image" src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover object-center transition-opacity duration-300">
+                        </div>
+                        <div class="grid grid-cols-4 gap-3 sm:gap-4" id="thumbnail-container">
+                            <button onclick="changeCarouselImage(0)" class="carousel-thumb relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square border-2 border-kyro-500 opacity-100 transition-all shadow-sm"><img src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover"></button>
+                            <button onclick="changeCarouselImage(1)" class="carousel-thumb relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square border-2 border-transparent opacity-60 hover:opacity-100 hover:border-kyro-300 transition-all shadow-sm"><img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover"></button>
+                            <button onclick="changeCarouselImage(2)" class="carousel-thumb relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square border-2 border-transparent opacity-60 hover:opacity-100 hover:border-kyro-300 transition-all shadow-sm"><img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover"></button>
+                            <button onclick="changeCarouselImage(3)" class="carousel-thumb relative rounded-xl sm:rounded-2xl overflow-hidden aspect-square border-2 border-transparent opacity-60 hover:opacity-100 hover:border-kyro-300 transition-all shadow-sm"><img src="https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover"></button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col h-full justify-start">
+                        <div class="flex items-center gap-2 mb-4 text-kyro-500 text-sm sm:text-base">
+                            <div class="flex"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <span class="text-kyro-700/80 font-sans tracking-wide border-b border-kyro-200">(128 Reviews)</span>
+                        </div>
+
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h1 class="text-3xl sm:text-4xl md:text-5xl font-normal text-kyro-900 mb-4 leading-tight">Kyro Body Wash</h1>
+                                <p class="text-2xl sm:text-3xl text-kyro-600 mb-6 font-bold">₹1,299</p>
+                            </div>
+                            <!-- Favorite Button PDP -->
+                            <button onclick="toggleFav('p1')" class="w-12 h-12 rounded-full border border-kyro-200 flex items-center justify-center text-kyro-400 hover:text-kyro-600 hover:bg-kyro-50 transition-colors shadow-sm">
+                                <i class="fa-heart fav-icon-p1 far text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="prose prose-base sm:prose-lg text-kyro-800/80 mb-8 font-light">
+                            <p class="leading-relaxed">Formulated with gentle, hydrating ingredients that cleanse without stripping your skin's natural moisture barrier. Infused with calming rose essence for beautifully soft skin all day.</p>
+                        </div>
+
+                        <div id="main-atc-section" class="bg-kyro-50/50 p-4 sm:p-6 rounded-[2rem] border border-kyro-100 mb-6">
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <div class="flex items-center bg-white rounded-full h-14 sm:h-16 w-full sm:w-40 justify-between px-2 shadow-sm border border-kyro-200">
+                                    <button onclick="updateQty(-1)" class="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center text-kyro-600 hover:bg-kyro-50 rounded-full focus:outline-none transition text-xl sm:text-2xl">-</button>
+                                    <span id="detail-product-qty" class="text-kyro-900 font-bold w-8 text-center text-lg sm:text-xl">1</span>
+                                    <button onclick="updateQty(1)" class="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center text-kyro-600 hover:bg-kyro-50 rounded-full focus:outline-none transition text-xl sm:text-2xl">+</button>
+                                </div>
+                                <button onclick="addDetailToCart()" class="w-full flex-1 flex items-center justify-center px-6 sm:px-8 py-4 sm:py-5 rounded-full shadow-xl shadow-kyro-500/30 text-lg sm:text-xl text-white bg-kyro-600 hover:bg-kyro-700 transform hover:-translate-y-1 transition-all duration-300 font-bold tracking-wide">Add to Cart</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-8">
+                            <button class="bg-[#5a31f4] text-white py-3 rounded-full flex items-center justify-center hover:opacity-90 transition shadow-sm font-sans font-bold text-sm">Shop <span class="bg-white text-[#5a31f4] px-1.5 ml-1 rounded-sm text-xs">Pay</span></button>
+                            <button class="bg-white border border-gray-200 text-gray-800 py-3 rounded-full flex items-center justify-center hover:bg-gray-50 transition shadow-sm font-sans font-bold text-sm"><i class="fab fa-google-pay text-xl mr-1"></i> Pay</button>
+                        </div>
+
+                        <!-- Trust Badges & Accordions retained -->
+                        <div class="flex justify-between items-center py-5 border-y border-kyro-100 mb-8">
+                            <div class="flex flex-col items-center gap-1.5 text-center px-2"><i class="fas fa-leaf text-2xl text-kyro-500"></i><span class="text-xs text-kyro-800 font-sans tracking-wide uppercase">100% Vegan</span></div>
+                            <div class="flex flex-col items-center gap-1.5 text-center px-2 border-l border-kyro-100"><i class="fas fa-paw text-2xl text-kyro-500"></i><span class="text-xs text-kyro-800 font-sans tracking-wide uppercase">Cruelty-Free</span></div>
+                            <div class="flex flex-col items-center gap-1.5 text-center px-2 border-l border-kyro-100"><i class="fas fa-shield-alt text-2xl text-kyro-500"></i><span class="text-xs text-kyro-800 font-sans tracking-wide uppercase">Secure</span></div>
+                        </div>
+                        
+                        <div class="space-y-3 font-sans">
+                            <div class="border border-kyro-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                                <button onclick="toggleAccordion('acc-ingredients')" class="w-full px-6 py-4 flex justify-between items-center text-left focus:outline-none group hover:bg-kyro-50 transition-colors">
+                                    <span class="font-bold text-kyro-900 tracking-wide">Key Ingredients</span><i class="fas fa-chevron-down text-kyro-400 accordion-icon group-hover:text-kyro-600" id="icon-acc-ingredients"></i>
+                                </button>
+                                <div id="acc-ingredients" class="accordion-content px-6 text-kyro-700 leading-relaxed text-sm">
+                                    <ul class="list-disc pl-5 space-y-2 mt-2"><li><strong class="text-kyro-900">Rose Hydrosol:</strong> Soothes irritation.</li><li><strong class="text-kyro-900">Hyaluronic Acid:</strong> Locks in moisture.</li></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCOUNT DASHBOARD VIEW -->
+        <div id="account-view" class="view-section hidden fade-in pb-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <div class="text-center mb-10 sm:mb-12">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl text-kyro-900 italic mb-2">My Account</h2>
+                    <p class="text-kyro-600">Welcome back, <span id="dash-user-name">Sarah</span>.</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
+                    <!-- Dashboard Sidebar -->
+                    <aside class="w-full md:w-64 flex-shrink-0">
+                        <div class="bg-white rounded-[2rem] p-4 shadow-sm border border-kyro-100 space-y-2 sticky top-32">
+                            <button onclick="switchDashTab('profile')" id="tab-btn-profile" class="dash-tab-btn w-full text-left px-6 py-4 rounded-xl font-bold tracking-wide transition-all bg-kyro-100 text-kyro-900">
+                                <i class="far fa-user mr-3 text-kyro-600"></i> Profile
+                            </button>
+                            <button onclick="switchDashTab('orders')" id="tab-btn-orders" class="dash-tab-btn w-full text-left px-6 py-4 rounded-xl font-bold tracking-wide transition-all text-kyro-700 hover:bg-kyro-50">
+                                <i class="fas fa-box mr-3 text-kyro-600"></i> Order History
+                            </button>
+                            <button onclick="switchDashTab('favorites')" id="tab-btn-favorites" class="dash-tab-btn w-full text-left px-6 py-4 rounded-xl font-bold tracking-wide transition-all text-kyro-700 hover:bg-kyro-50">
+                                <i class="far fa-heart mr-3 text-kyro-600"></i> Favorites
+                            </button>
+                            <div class="my-4 border-t border-kyro-100"></div>
+                            <button onclick="logout()" class="w-full text-left px-6 py-4 rounded-xl font-bold tracking-wide transition-all text-gray-500 hover:bg-gray-100 hover:text-gray-800">
+                                <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                            </button>
+                        </div>
+                    </aside>
+
+                    <!-- Dashboard Content -->
+                    <main class="flex-1 bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-xl shadow-kyro-100/50 border border-kyro-50 min-h-[50vh]">
+                        
+                        <!-- Profile Tab -->
+                        <div id="dash-tab-profile" class="dash-content block fade-in">
+                            <h3 class="text-2xl font-bold text-kyro-900 mb-6 border-b border-kyro-100 pb-4">Personal Details</h3>
+                            <div class="space-y-6 max-w-lg">
+                                <div>
+                                    <label class="block text-sm font-bold text-kyro-500 uppercase tracking-widest mb-1">Full Name</label>
+                                    <p class="text-lg text-kyro-900 bg-kyro-50 px-4 py-3 rounded-xl border border-kyro-100">Sarah Jenkins</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-kyro-500 uppercase tracking-widest mb-1">Phone Number</label>
+                                    <p id="dash-user-phone" class="text-lg text-kyro-900 bg-kyro-50 px-4 py-3 rounded-xl border border-kyro-100">+91 98765 43210</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-kyro-500 uppercase tracking-widest mb-1">Email</label>
+                                    <p class="text-lg text-kyro-900 bg-kyro-50 px-4 py-3 rounded-xl border border-kyro-100">sarah.j@example.com</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-kyro-500 uppercase tracking-widest mb-1">Default Address</label>
+                                    <p class="text-lg text-kyro-900 bg-kyro-50 px-4 py-3 rounded-xl border border-kyro-100">12 Rose Avenue, Vasant Vihar<br>New Delhi, 110057</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orders Tab -->
+                        <div id="dash-tab-orders" class="dash-content hidden fade-in">
+                            <h3 class="text-2xl font-bold text-kyro-900 mb-6 border-b border-kyro-100 pb-4">Order History</h3>
+                            <div class="space-y-4">
+                                <div class="border border-kyro-100 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:shadow-md transition">
+                                    <div>
+                                        <p class="text-sm font-bold text-kyro-500 mb-1">Order #KY-10892</p>
+                                        <p class="text-lg text-kyro-900 font-bold mb-1">Kyro Body Wash (x2)</p>
+                                        <p class="text-sm text-kyro-600">Placed on Oct 12, 2026</p>
+                                    </div>
+                                    <div class="mt-4 sm:mt-0 text-left sm:text-right">
+                                        <p class="text-lg font-bold text-kyro-900 mb-1">₹2,598</p>
+                                        <span class="inline-flex px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full tracking-wide uppercase">Delivered</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Favorites Tab -->
+                        <div id="dash-tab-favorites" class="dash-content hidden fade-in">
+                            <h3 class="text-2xl font-bold text-kyro-900 mb-6 border-b border-kyro-100 pb-4">Your Wishlist</h3>
+                            <div id="favorites-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <!-- Populated via JS -->
+                            </div>
+                            <div id="empty-favorites-msg" class="hidden text-center py-12">
+                                <i class="far fa-heart text-5xl text-kyro-200 mb-4"></i>
+                                <p class="text-xl text-kyro-700">You haven't added any favorites yet.</p>
+                                <button onclick="switchView('home-view')" class="mt-4 px-6 py-3 bg-kyro-50 text-kyro-900 rounded-full font-bold hover:bg-kyro-100 transition border border-kyro-200">Explore Collection</button>
+                            </div>
+                        </div>
+
+                    </main>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sticky Mobile ATC Bar -->
+    <div id="sticky-mobile-atc" class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-kyro-200 p-4 pb-6 sm:hidden z-30 transition-transform duration-300 translate-y-full shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+        <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-col">
+                <span class="text-sm font-bold text-kyro-900 truncate max-w-[120px]">Kyro Body Wash</span>
+                <span class="text-kyro-600 font-bold">₹1,299</span>
+            </div>
+            <button onclick="addDetailToCart()" class="flex-1 bg-kyro-600 text-white font-bold tracking-wide py-3 px-6 rounded-full shadow-md text-sm active:scale-95 transition-transform text-center">Add to Cart</button>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (Mock OTP) -->
+    <div id="auth-modal-backdrop" class="fixed inset-0 bg-kyro-900/60 backdrop-blur-md z-[80] hidden flex items-center justify-center p-4 transition-opacity opacity-0">
+        <div id="auth-modal-content" class="bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-500 ease-out border border-kyro-100 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-kyro-50 text-kyro-500 hover:bg-kyro-100 hover:text-kyro-900 focus:outline-none transition z-10">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="p-8 sm:p-10 pt-12">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl italic font-bold text-kyro-900 mb-2">Welcome</h3>
+                    <p class="text-kyro-600 text-sm">Sign in to access your profile and favorites.</p>
+                </div>
+
+                <!-- Step 1: Phone -->
+                <form id="login-step-1" onsubmit="sendOTP(event)" class="block fade-in">
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-kyro-500 uppercase tracking-widest mb-2">Mobile Number</label>
+                        <div class="flex rounded-2xl overflow-hidden border border-kyro-200 focus-within:ring-2 focus-within:ring-kyro-300 transition shadow-inner">
+                            <span class="bg-kyro-50 px-4 py-3.5 text-kyro-600 border-r border-kyro-200">+91</span>
+                            <input type="tel" id="auth-phone" required pattern="[0-9]{10}" class="w-full px-4 py-3.5 outline-none bg-white font-sans text-lg tracking-wider" placeholder="98765 43210">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full flex items-center justify-center px-6 py-4 rounded-full shadow-lg shadow-kyro-900/30 text-lg text-white bg-kyro-900 hover:bg-kyro-800 font-bold focus:outline-none transition-all transform hover:-translate-y-1">
+                        Send OTP
+                    </button>
+                </form>
+
+                <!-- Step 2: OTP -->
+                <form id="login-step-2" onsubmit="verifyOTP(event)" class="hidden fade-in">
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-kyro-500 uppercase tracking-widest mb-2">Enter 4-Digit OTP</label>
+                        <div class="flex gap-3 justify-center">
+                            <input type="text" maxlength="1" required class="w-14 h-16 text-center text-2xl font-bold rounded-2xl border border-kyro-200 focus:ring-2 focus:ring-kyro-300 focus:border-kyro-500 outline-none bg-white shadow-inner">
+                            <input type="text" maxlength="1" required class="w-14 h-16 text-center text-2xl font-bold rounded-2xl border border-kyro-200 focus:ring-2 focus:ring-kyro-300 focus:border-kyro-500 outline-none bg-white shadow-inner">
+                            <input type="text" maxlength="1" required class="w-14 h-16 text-center text-2xl font-bold rounded-2xl border border-kyro-200 focus:ring-2 focus:ring-kyro-300 focus:border-kyro-500 outline-none bg-white shadow-inner">
+                            <input type="text" maxlength="1" required class="w-14 h-16 text-center text-2xl font-bold rounded-2xl border border-kyro-200 focus:ring-2 focus:ring-kyro-300 focus:border-kyro-500 outline-none bg-white shadow-inner">
+                        </div>
+                        <p class="text-xs text-center text-kyro-500 mt-4 cursor-pointer hover:text-kyro-800" onclick="resetLogin()">Resend OTP or Change Number</p>
+                    </div>
+                    <button type="submit" id="verify-btn" class="w-full flex items-center justify-center px-6 py-4 rounded-full shadow-lg shadow-kyro-600/30 text-lg text-white bg-kyro-600 hover:bg-kyro-700 font-bold focus:outline-none transition-all transform hover:-translate-y-1">
+                        Verify & Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-kyro-900 text-kyro-100 py-12 sm:py-16 rounded-t-[3rem] sm:rounded-t-[4rem] mt-auto relative overflow-hidden">
+        <!-- Existing Footer -->
+        <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=1000')] bg-cover mix-blend-overlay"></div>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+                <div><h3 class="text-4xl sm:text-5xl italic font-bold text-white mb-4">Kyro.</h3><p class="text-kyro-200/80 text-base max-w-xs mx-auto md:mx-0 font-light">Premium skincare designed for the modern individual.</p></div>
+                <div>
+                    <h4 class="text-lg text-white mb-4 border-b border-kyro-700 pb-2 inline-block">Quick Links</h4>
+                    <ul class="space-y-3 text-base text-kyro-200/80">
+                        <li><a href="#" onclick="switchView('home-view')" class="hover:text-white transition-all">Shop Collection</a></li>
+                        <li><a href="#" onclick="handleUserAction()" class="hover:text-white transition-all">My Account</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg text-white mb-4 border-b border-kyro-700 pb-2 inline-block">Follow Us</h4>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-kyro-800 flex items-center justify-center hover:bg-white hover:text-kyro-900 transition-colors"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer Setup -->
+    <div id="cart-drawer-backdrop" class="fixed inset-0 bg-kyro-900/40 backdrop-blur-sm z-[60] hidden transition-opacity opacity-0" onclick="toggleCart()"></div>
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-[70] transform translate-x-full transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col sm:rounded-l-[2rem]">
+        <div class="flex items-center justify-between p-6 sm:p-8 border-b border-kyro-100">
+            <h2 class="text-2xl text-kyro-900 font-bold">Your Bag</h2>
+            <button onclick="toggleCart()" class="w-10 h-10 flex items-center justify-center rounded-full bg-kyro-50 text-kyro-600 hover:bg-kyro-100 hover:text-kyro-900 focus:outline-none transition"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        <div class="px-6 py-4 bg-kyro-50 border-b border-kyro-100 text-center font-sans text-sm">
+            <p class="text-kyro-800 mb-2">You are <span class="font-bold text-kyro-600">₹201</span> away from free shipping!</p>
+            <div class="w-full h-2 bg-kyro-200 rounded-full overflow-hidden"><div class="h-full bg-kyro-500 rounded-full w-[85%] transition-all duration-1000"></div></div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 hide-scroll" id="cart-items-container">
+            <div class="flex flex-col items-center justify-center h-full text-kyro-500 hidden" id="empty-cart-msg">
+                <div class="w-20 h-20 bg-kyro-50 rounded-full flex items-center justify-center mb-6"><i class="fas fa-shopping-bag text-3xl text-kyro-300"></i></div>
+                <p class="text-lg">Your bag is beautifully empty.</p>
+                <button onclick="toggleCart()" class="mt-6 px-8 py-3 bg-kyro-900 text-white rounded-full text-base hover:bg-kyro-800 transition">Start Shopping</button>
+            </div>
+        </div>
+        <div class="border-t border-kyro-100 p-6 sm:p-8 bg-white sm:rounded-bl-[2rem]">
+            <div class="flex justify-between text-xl font-bold text-kyro-900 mb-2"><p>Subtotal</p><p id="cart-subtotal">₹0</p></div>
+            <button class="w-full px-6 py-4 rounded-full shadow-xl text-lg text-white bg-kyro-600 font-bold" id="checkout-btn" disabled>Secure Checkout <i class="fas fa-lock ml-2 text-sm opacity-80"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        const catalog = {
+            'p1': { id: 'p1', name: 'Kyro Body Wash', price: 1299, img: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=600', isAvailable: true },
+            'p2': { id: 'p2', name: 'Kyro Body Lotion', price: null, img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=600', isAvailable: false },
+            'p3': { id: 'p3', name: 'Face Moisturizer', price: null, img: 'https://images.unsplash.com/photo-1570194065650-d99fb4b8f36a?auto=format&fit=crop&q=80&w=600', isAvailable: false }
+        };
+
+        let cart = [];
+        let detailQty = 1;
+        
+        // Auth State
+        let isLoggedIn = false;
+        let userPhone = "";
+        
+        // Favorites State
+        let favorites = []; // Array of product IDs
+
+        // --- ROUTING / VIEWS ---
+        function switchView(viewId, scrollToPromos = false) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Show target view
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            // Handle specific view logistics
+            if (viewId === 'home-view') {
+                document.getElementById('sticky-mobile-atc').classList.add('translate-y-full');
+                if (scrollToPromos) {
+                    setTimeout(() => document.getElementById('promotions').scrollIntoView({ behavior: 'smooth' }), 50);
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+            if (viewId === 'product-detail-view') {
+                setupStickyATC();
+                window.scrollTo({ top: 0 });
+            }
+            if (viewId === 'account-view') {
+                document.getElementById('sticky-mobile-atc').classList.add('translate-y-full');
+                window.scrollTo({ top: 0 });
+            }
+        }
+
+        function openProductDetail() {
+            detailQty = 1;
+            document.getElementById('detail-product-qty').innerText = detailQty;
+            switchView('product-detail-view');
+        }
+
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+
+        // --- AUTHENTICATION FLOW ---
+        function handleUserAction() {
+            if (isLoggedIn) {
+                switchView('account-view');
+                switchDashTab('profile');
+            } else {
+                openAuthModal();
+            }
+        }
+
+        function openAuthModal() {
+            const backdrop = document.getElementById('auth-modal-backdrop');
+            const modal = document.getElementById('auth-modal-content');
+            resetLogin();
+            backdrop.classList.remove('hidden');
+            setTimeout(() => { backdrop.classList.remove('opacity-0'); modal.classList.remove('scale-95'); }, 10);
+        }
+
+        function closeAuthModal() {
+            const backdrop = document.getElementById('auth-modal-backdrop');
+            const modal = document.getElementById('auth-modal-content');
+            backdrop.classList.add('opacity-0');
+            modal.classList.add('scale-95');
+            setTimeout(() => backdrop.classList.add('hidden'), 500);
+        }
+
+        function resetLogin() {
+            document.getElementById('login-step-1').classList.remove('hidden');
+            document.getElementById('login-step-2').classList.add('hidden');
+            document.getElementById('login-step-1').reset();
+            document.getElementById('login-step-2').reset();
+        }
+
+        function sendOTP(e) {
+            e.preventDefault();
+            userPhone = document.getElementById('auth-phone').value;
+            document.getElementById('login-step-1').classList.add('hidden');
+            document.getElementById('login-step-2').classList.remove('hidden');
+            
+            // Auto-focus first OTP input
+            const otpInputs = document.querySelectorAll('#login-step-2 input[type="text"]');
+            setTimeout(() => otpInputs[0].focus(), 100);
+            
+            // Simple OTP auto-advance logic
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', () => {
+                    if(input.value.length === 1 && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+                });
+            });
+        }
+
+        function verifyOTP(e) {
+            e.preventDefault();
+            const btn = document.getElementById('verify-btn');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            
+            setTimeout(() => {
+                isLoggedIn = true;
+                document.getElementById('dash-user-phone').innerText = `+91 ${userPhone.substring(0,5)} ${userPhone.substring(5)}`;
+                
+                // Update header user icon style to indicate logged in
+                const userIcon = document.getElementById('header-user-icon');
+                userIcon.classList.replace('far', 'fas');
+                userIcon.classList.add('text-kyro-600');
+                
+                closeAuthModal();
+                btn.innerHTML = 'Verify & Login'; // reset for future
+                
+                // Navigate to dashboard
+                setTimeout(() => handleUserAction(), 400); 
+            }, 1000);
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            userPhone = "";
+            const userIcon = document.getElementById('header-user-icon');
+            userIcon.classList.replace('fas', 'far');
+            userIcon.classList.remove('text-kyro-600');
+            switchView('home-view');
+        }
+
+        // --- DASHBOARD TABS ---
+        function switchDashTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.dash-content').forEach(el => el.classList.add('hidden'));
+            // Reset button styles
+            document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-kyro-100', 'text-kyro-900');
+                btn.classList.add('text-kyro-700', 'hover:bg-kyro-50');
+            });
+            
+            // Show active content
+            document.getElementById(`dash-tab-${tabId}`).classList.remove('hidden');
+            // Style active button
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.remove('text-kyro-700', 'hover:bg-kyro-50');
+            activeBtn.classList.add('bg-kyro-100', 'text-kyro-900');
+
+            if(tabId === 'favorites') renderFavoritesTab();
+        }
+
+        // --- STREAMING_CHUNK:Implementing Favorites Logic... ---
+        // --- FAVORITES / WISHLIST ---
+        function toggleFav(productId, e) {
+            if (e) e.stopPropagation(); // Prevents opening PDP if clicked on card
+            
+            const index = favorites.indexOf(productId);
+            if (index > -1) {
+                favorites.splice(index, 1); // Remove
+            } else {
+                favorites.push(productId); // Add
+            }
+            updateFavUI();
+        }
+
+        function updateFavUI() {
+            // Update Header Badge
+            const badge = document.getElementById('fav-badge');
+            if (favorites.length > 0) {
+                badge.innerText = favorites.length;
+                badge.classList.remove('hidden', 'scale-0');
+                badge.classList.add('scale-100');
+            } else {
+                badge.classList.remove('scale-100');
+                badge.classList.add('scale-0');
+                setTimeout(() => badge.classList.add('hidden'), 300);
+            }
+
+            // Update all Heart Icons on the page
+            Object.keys(catalog).forEach(id => {
+                const icons = document.querySelectorAll(`.fav-icon-${id}`);
+                icons.forEach(icon => {
+                    if (favorites.includes(id)) {
+                        icon.classList.replace('far', 'fas');
+                        icon.classList.add('text-kyro-600', 'heart-beat');
+                        setTimeout(() => icon.classList.remove('heart-beat'), 300);
+                    } else {
+                        icon.classList.replace('fas', 'far');
+                        icon.classList.remove('text-kyro-600');
+                    }
+                });
+            });
+
+            // Re-render tab if it's currently open
+            if (!document.getElementById('dash-tab-favorites').classList.contains('hidden')) {
+                renderFavoritesTab();
+            }
+        }
+
+        function openFavorites() {
+            if (isLoggedIn) {
+                switchView('account-view');
+                switchDashTab('favorites');
+            } else {
+                openAuthModal();
+            }
+        }
+
+        function renderFavoritesTab() {
+            const grid = document.getElementById('favorites-grid');
+            const emptyMsg = document.getElementById('empty-favorites-msg');
+            grid.innerHTML = '';
+
+            if (favorites.length === 0) {
+                grid.classList.add('hidden');
+                emptyMsg.classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                emptyMsg.classList.add('hidden');
+                
+                favorites.forEach(id => {
+                    const product = catalog[id];
+                    const priceHtml = product.isAvailable ? `<p class="font-bold text-kyro-900">₹${product.price}</p>` : `<p class="text-sm text-kyro-500">Coming Soon</p>`;
+                    
+                    const el = document.createElement('div');
+                    el.className = 'border border-kyro-100 rounded-2xl overflow-hidden flex bg-white hover:shadow-md transition relative';
+                    el.innerHTML = `
+                        <button onclick="toggleFav('${id}')" class="absolute top-2 right-2 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-sm z-10 text-kyro-600 hover:scale-110 transition">
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                        <div class="w-1/3 aspect-[4/5] bg-kyro-50">
+                            <img src="${product.img}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-center">
+                            <h4 class="font-bold text-kyro-900 text-lg mb-1">${product.name}</h4>
+                            ${priceHtml}
+                            ${product.isAvailable ? `<button onclick="switchView('product-detail-view')" class="mt-3 text-sm text-kyro-600 font-bold underline underline-offset-4">View Product</button>` : ''}
+                        </div>
+                    `;
+                    grid.appendChild(el);
+                });
+            }
+        }
+
+        // --- CART LOGIC (Retained) ---
+        function updateQty(change) { detailQty += change; if (detailQty < 1) detailQty = 1; document.getElementById('detail-product-qty').innerText = detailQty; }
+        function addDetailToCart() {
+            const existingItem = cart.find(item => item.id === catalog['p1'].id);
+            if (existingItem) existingItem.quantity += detailQty;
+            else cart.push({ ...catalog['p1'], quantity: detailQty });
+            detailQty = 1; document.getElementById('detail-product-qty').innerText = detailQty;
+            updateCartBadge(); toggleCart(); 
+        }
+        function toggleCart() {
+            const backdrop = document.getElementById('cart-drawer-backdrop');
+            const drawer = document.getElementById('cart-drawer');
+            if (backdrop.classList.contains('hidden')) {
+                backdrop.classList.remove('hidden');
+                setTimeout(() => { backdrop.classList.remove('opacity-0'); drawer.classList.remove('translate-x-full'); }, 10);
+                renderCart();
+            } else {
+                backdrop.classList.add('opacity-0'); drawer.classList.add('translate-x-full');
+                setTimeout(() => { backdrop.classList.add('hidden'); }, 500); 
+            }
+        }
+        function removeFromCart(id) { cart = cart.filter(item => item.id !== id); updateCartBadge(); renderCart(); if(cart.length === 0) setTimeout(toggleCart, 800); }
+        function changeCartItemQty(id, change) { const item = cart.find(item => item.id === id); if (item) { item.quantity += change; if (item.quantity <= 0) removeFromCart(id); else { renderCart(); updateCartBadge(); } } }
+        function updateCartBadge() {
+            const badge = document.getElementById('cart-badge'); const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) { badge.innerText = totalItems; badge.classList.remove('hidden', 'scale-0'); badge.classList.add('scale-100', 'animate-ping', 'opacity-70'); setTimeout(() => badge.classList.remove('animate-ping', 'opacity-70'), 300);
+            } else { badge.classList.remove('scale-100'); badge.classList.add('scale-0'); setTimeout(() => badge.classList.add('hidden'), 300); }
+        }
+        function renderCart() {
+            const container = document.getElementById('cart-items-container'); const emptyMsg = document.getElementById('empty-cart-msg'); const subtotalEl = document.getElementById('cart-subtotal'); const checkoutBtn = document.getElementById('checkout-btn');
+            Array.from(container.children).forEach(child => { if (child.id !== 'empty-cart-msg') child.remove(); });
+            let subtotal = 0;
+            if (cart.length === 0) { emptyMsg.classList.remove('hidden'); emptyMsg.classList.add('flex'); checkoutBtn.disabled = true;
+            } else {
+                emptyMsg.classList.add('hidden'); emptyMsg.classList.remove('flex'); checkoutBtn.disabled = false;
+                cart.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                    const itemEl = document.createElement('div'); itemEl.className = 'flex py-5 border-b border-kyro-100 last:border-0 font-sans';
+                    itemEl.innerHTML = `<div class="h-24 w-24 flex-shrink-0 rounded-xl border border-kyro-200 p-1"><img src="${item.img}" class="h-full w-full object-cover rounded-lg"></div><div class="ml-4 flex flex-1 flex-col justify-center"><div><div class="flex justify-between font-bold"><h3>${item.name}</h3><p>₹${(item.price * item.quantity).toLocaleString('en-IN')}</p></div></div><div class="flex flex-1 items-end justify-between mt-3"><div class="flex items-center border border-kyro-200 rounded-full bg-kyro-50 h-8 px-1"><button onclick="changeCartItemQty('${item.id}', -1)" class="w-6">-</button><span class="w-6 text-center font-bold">${item.quantity}</span><button onclick="changeCartItemQty('${item.id}', 1)" class="w-6">+</button></div><button onclick="removeFromCart('${item.id}')" class="text-xs text-kyro-400 underline">Remove</button></div></div>`;
+                    container.appendChild(itemEl);
+                });
+            }
+            subtotalEl.innerText = `₹${subtotal.toLocaleString('en-IN')}`;
+        }
+
+        // --- UTILS ---
+        function changeCarouselImage(index) {
+            const imgs = ['https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=800'];
+            document.getElementById('main-product-image').src = imgs[index];
+            document.querySelectorAll('.carousel-thumb').forEach((t, i) => { t.classList.toggle('border-kyro-500', i===index); t.classList.toggle('opacity-100', i===index); t.classList.toggle('border-transparent', i!==index); t.classList.toggle('opacity-60', i!==index); });
+        }
+        function toggleAccordion(id) {
+            const content = document.getElementById(id); const icon = document.getElementById('icon-' + id);
+            content.classList.toggle('open'); icon.classList.toggle('rotate');
+        }
+        function setupStickyATC() {
+            const stickyBar = document.getElementById('sticky-mobile-atc'); const mainAtcSection = document.getElementById('main-atc-section');
+            if (!mainAtcSection || !stickyBar) return;
+            const observer = new IntersectionObserver((entries) => {
+                if (window.innerWidth >= 640) return;
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting && !document.getElementById('product-detail-view').classList.contains('hidden')) stickyBar.classList.remove('translate-y-full');
+                    else stickyBar.classList.add('translate-y-full');
+                });
+            }, { threshold: 0 });
+            observer.observe(mainAtcSection);
+        }
+        window.addEventListener('load', setupStickyATC); window.addEventListener('resize', () => { if (window.innerWidth >= 640) document.getElementById('sticky-mobile-atc').classList.add('translate-y-full'); });
+    </script>
+</body>
+</html>
